@@ -35,7 +35,7 @@ async def reset(dut):
 async def step(dut):
     """One clock edge, then settle so flop outputs are stable to read."""
     await ClockCycles(dut.clk, 1)
-    await Timer(1, unit="ns")
+    await Timer(10, unit="ns")
 
 
 @cocotb.test()
