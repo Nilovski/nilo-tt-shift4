@@ -1,6 +1,6 @@
 ![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg) ![](../../workflows/fpga/badge.svg)
 
-# 4-bit Universal Shift Register — Tiny Tapeout TTSKY26c
+# 4-bit Universal Shift Register - Tiny Tapeout TTSKY26c
 
 A 74194-style universal shift register designed in Verilog, carried through the
 full RTL-to-GDSII flow (OpenLane/LibreLane, SkyWater Sky130), and submitted for
@@ -27,11 +27,11 @@ multiple chips into wider registers in either direction. Full pinout is in
 
 The design was verified two independent ways before tapeout:
 
-- **Simulation** — a six-test [cocotb](https://www.cocotb.org/) suite
+- **Simulation**: a six-test [cocotb](https://www.cocotb.org/) suite
   (Icarus Verilog) covering reset, all four modes, and 500 randomized
   cycles checked against a Python golden model. The same suite runs
   gate-level against the post-synthesis netlist in CI.
-- **Formal verification** — [SymbiYosys](https://github.com/YosysHQ/sby)
+- **Formal verification**:[SymbiYosys](https://github.com/YosysHQ/sby)
   with the Z3 SMT solver: bounded model checking plus an **unbounded
   induction proof** of five properties (reset, hold, both shift
   directions, parallel load). The properties hold for all reachable
@@ -53,4 +53,4 @@ on a real chip.
 
 ---
 
-*Şahpar Nil Özer · Vanderbilt University ECE*
+*Şahpar Nil Özer - Vanderbilt University ECE*
