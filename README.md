@@ -6,7 +6,7 @@ A 74194-style universal shift register designed in Verilog, carried through the
 full RTL-to-GDSII flow (OpenLane/LibreLane, SkyWater Sky130), and submitted for
 fabrication on the Tiny Tapeout TTSKY26c shuttle.
 
-**[📄 Datasheet page](docs/info.md) · [🔬 Results & GDS viewer](https://nilovski.github.io/nilo-tt-shift4/)**
+**[Datasheet page](docs/info.md) · [ Results & GDS viewer](https://nilovski.github.io/nilo-tt-shift4/)**
 
 ## What it does
 
