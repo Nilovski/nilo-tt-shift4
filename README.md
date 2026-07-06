@@ -1,42 +1,56 @@
 ![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg) ![](../../workflows/fpga/badge.svg)
 
-# Tiny Tapeout Verilog Project Template
+# 4-bit Universal Shift Register — Tiny Tapeout TTSKY26c
 
-- [Read the documentation for project](docs/info.md)
+A 74194-style universal shift register designed in Verilog, carried through the
+full RTL-to-GDSII flow (OpenLane/LibreLane, SkyWater Sky130), and submitted for
+fabrication on the Tiny Tapeout TTSKY26c shuttle.
 
-## What is Tiny Tapeout?
+**[📄 Datasheet page](docs/info.md) · [🔬 Results & GDS viewer](https://nilovski.github.io/nilo-tt-shift4/)**
 
-Tiny Tapeout is an educational project that aims to make it easier and cheaper than ever to get your digital and analog designs manufactured on a real chip.
+## What it does
 
-To learn more and get started, visit https://tinytapeout.com.
+A single 4-bit register `Q` with four synchronous modes selected by `MODE[1:0]`:
 
-## Set up your Verilog project
+| MODE | Operation     | Next state              |
+|------|---------------|-------------------------|
+| `00` | Hold          | `Q <= Q`                |
+| `01` | Shift right   | `Q <= {SER_IN_R, Q[3:1]}` |
+| `10` | Shift left    | `Q <= {Q[2:0], SER_IN_L}` |
+| `11` | Parallel load | `Q <= D[3:0]`           |
 
-1. Add your Verilog files to the `src` folder.
-2. Edit the [info.yaml](info.yaml) and update information about your project, paying special attention to the `source_files` and `top_module` properties. If you are upgrading an existing Tiny Tapeout project, check out our [online info.yaml migration tool](https://tinytapeout.github.io/tt-yaml-upgrade-tool/).
-3. Edit [docs/info.md](docs/info.md) and add a description of your project.
-4. Adapt the testbench to your design. See [test/README.md](test/README.md) for more information.
+Serial-out pins (`SER_OUT_R` = `Q[0]`, `SER_OUT_L` = `Q[3]`) allow chaining
+multiple chips into wider registers in either direction. Full pinout is in
+[`info.yaml`](info.yaml).
 
-The GitHub action will automatically build the ASIC files using [LibreLane](https://www.zerotoasiccourse.com/terminology/librelane/).
+## Verification
 
-## Enable GitHub actions to build the results page
+The design was verified two independent ways before tapeout:
 
-- [Enabling GitHub Pages](https://tinytapeout.com/faq/#my-github-action-is-failing-on-the-pages-part)
+- **Simulation** — a six-test [cocotb](https://www.cocotb.org/) suite
+  (Icarus Verilog) covering reset, all four modes, and 500 randomized
+  cycles checked against a Python golden model. The same suite runs
+  gate-level against the post-synthesis netlist in CI.
+- **Formal verification** — [SymbiYosys](https://github.com/YosysHQ/sby)
+  with the Z3 SMT solver: bounded model checking plus an **unbounded
+  induction proof** of five properties (reset, hold, both shift
+  directions, parallel load). The properties hold for all reachable
+  states, not just simulated cases. See [`formal/shift4.sby`](formal/shift4.sby)
+  and the `FORMAL` block in [`src/project.v`](src/project.v).
 
-## Resources
+Run them locally:
 
-- [FAQ](https://tinytapeout.com/faq/)
-- [Digital design lessons](https://tinytapeout.com/digital_design/)
-- [Learn how semiconductors work](https://tinytapeout.com/siliwiz/)
-- [Join the community](https://tinytapeout.com/discord)
-- [Build your design locally](https://www.tinytapeout.com/guides/local-hardening/)
+```bash
+cd test && make                    # simulation
+cd formal && sby -f shift4.sby     # formal (requires yosys, sby, z3)
+```
 
-## What next?
+## About Tiny Tapeout
 
-- [Submit your design to the next shuttle](https://app.tinytapeout.com/).
-- Edit [this README](README.md) and explain your design, how it works, and how to test it.
-- Share your project on your social network of choice:
-  - LinkedIn [#tinytapeout](https://www.linkedin.com/search/results/content/?keywords=%23tinytapeout) [@TinyTapeout](https://www.linkedin.com/company/100708654/)
-  - Mastodon [#tinytapeout](https://chaos.social/tags/tinytapeout) [@matthewvenn](https://chaos.social/@matthewvenn)
-  - X (formerly Twitter) [#tinytapeout](https://twitter.com/hashtag/tinytapeout) [@tinytapeout](https://twitter.com/tinytapeout)
-  - Bluesky [@tinytapeout.com](https://bsky.app/profile/tinytapeout.com)
+[Tiny Tapeout](https://tinytapeout.com) is an educational project that makes
+it easier and cheaper than ever to get digital and analog designs manufactured
+on a real chip.
+
+---
+
+*Şahpar Nil Özer · Vanderbilt University ECE*
